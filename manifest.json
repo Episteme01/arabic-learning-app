@@ -1,15 +1,25 @@
 {
+  "id": "/arabic-learning-app",
   "name": "كَلِمَاتِي الأُولَى - Arabic Learning",
   "short_name": "كلماتي",
   "description": "Interactive Arabic vocabulary learning app for children.",
-  "start_url": "./index.html",
-  "scope": "./",
+  
+  "start_url": "/arabic-learning-app/index.html",
+  "scope": "/arabic-learning-app/",
+  
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  
   "orientation": "portrait",
+  
   "background_color": "#D0E8D0",
   "theme_color": "#2D5A2D",
+  
   "lang": "ar",
   "dir": "rtl",
+  
+  "categories": ["education", "kids", "learning"],
+  
   "icons": [
     {
       "src": "icon-72.png",
@@ -40,6 +50,39 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Home Screen"
+    },
+    {
+      "src": "learning.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Learning Screen"
+    }
+  ],
+
+  "prefer_related_applications": false,
+
+  "related_applications": [],
+
+  "shortcuts": [
+    {
+      "name": "ابدأ التعلم",
+      "short_name": "ابدأ",
+      "url": "/arabic-learning-app/index.html",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
