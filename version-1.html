@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Noto+Naskh+Arabic:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .card-flip { perspective: 800px; }
+    .card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-front, .card-back { backface-visibility: hidden; position: absolute; inset: 0; border-radius: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .card-back { transform: rotateY(180deg); }
+    .bounce-in { animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    .star-burst { animation: starPop 0.6s ease-out forwards; }
+    @keyframes starPop { 0% { transform: scale(0) rotate(0deg); opacity: 1; } 50% { transform: scale(1.3) rotate(180deg); opacity: 1; } 100% { transform: scale(0) rotate(360deg); opacity: 0; } }
+    .progress-fill { transition: width 0.5s ease; }
+    .category-btn { transition: all 0.2s ease; }
+    .category-btn:hover { transform: translateY(-2px); }
+    .category-btn.active { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  
+ </head>
+ <body class="h-full overflow-auto" style="font-family: 'Amiri', serif;">
+  <div id="app" class="h-full w-full" style="background: linear-gradient(135deg, #D0E8D0, #A8D5A8);"><!-- HOME SCREEN -->
+   <div id="home-screen" class="h-full w-full flex flex-col items-center justify-center p-6">
+    <div class="text-center bounce-in">
+     <div class="text-7xl mb-4">
+      📖
+     </div>
+     <h1 id="title-el" class="text-5xl md:text-6xl font-bold mb-3" style="font-family: 'Noto Naskh Arabic', serif; color: #1A3C1A;">كَلِمَاتِي الأُولَى</h1>
+     <p id="subtitle-el" class="text-xl md:text-2xl mb-2" style="color: #1A3C1A;">تَعَلُّمُ المُفْرَدَاتِ العَرَبِيَّةِ لِلأَطْفَالِ</p>
+     <p class="text-lg mb-8" style="color: #2D5A2D;">(الأَطْفَالُ – المُسْتَوَى الأَوَّلُ)</p><button onclick="startLearning()" class="px-10 py-4 rounded-full text-2xl font-bold text-white shadow-lg category-btn" style="background: #2D5A2D;"> 🌟 اِبْدَأْ التَّعَلُّمَ 🌟 </button>
+     <p id="academy-el" class="mt-8 text-base" style="color: #3A6B3A;">Episteme Learning Academy</p>
+    </div>
+   </div><!-- CATEGORY SCREEN -->
+   <div id="category-screen" class="h-full w-full flex flex-col p-4 md:p-8" style="display:none;">
+    <div class="flex items-center justify-between mb-6"><button onclick="goHome()" class="p-2 rounded-full" style="background: #2D5A2D; color: white;"><i data-lucide="arrow-right" style="width:28px;height:28px;"></i></button>
+     <h2 class="text-3xl font-bold" style="color: #1A3C1A; font-family: 'Noto Naskh Arabic', serif;">اِخْتَرْ مَوْضُوعًا</h2>
+     <div id="total-score" class="text-xl font-bold px-4 py-1 rounded-full" style="background: #FFD700; color: #1A3C1A;">
+      ⭐ 0
+     </div>
+    </div>
+    <div id="categories" class="grid grid-cols-2 md:grid-cols-3 gap-4 flex-1 overflow-auto pb-4"></div>
+   </div><!-- LEARNING SCREEN -->
+   <div id="learn-screen" class="h-full w-full flex flex-col p-4 md:p-8" style="display:none;">
+    <div class="flex items-center justify-between mb-4"><button onclick="goCategories()" class="p-2 rounded-full" style="background: #2D5A2D; color: white;"><i data-lucide="arrow-right" style="width:28px;height:28px;"></i></button>
+     <h2 id="cat-title" class="text-2xl font-bold" style="color: #1A3C1A; font-family: 'Noto Naskh Arabic', serif;"></h2><span id="word-count" class="text-lg font-bold" style="color: #2D5A2D;"></span>
+    </div>
+    <div class="w-full rounded-full h-3 mb-4" style="background: rgba(26,60,26,0.15);">
+     <div id="progress-bar" class="h-3 rounded-full progress-fill" style="background: #2D5A2D; width: 0%;"></div>
+    </div>
+    <div class="flex-1 flex items-center justify-center">
+     <div class="card-flip w-72 h-80 md:w-96 md:h-96 cursor-pointer" onclick="flipCard()">
+      <div id="card-inner" class="card-inner w-full h-full relative">
+       <div class="card-front shadow-2xl" style="background: white;">
+        <div id="card-emoji" class="text-8xl mb-4"></div>
+        <div id="card-word" class="text-4xl font-bold" style="color: #1A3C1A; font-family: 'Noto Naskh Arabic', serif;"></div>
+       </div>
+       <div class="card-back shadow-2xl" style="background: #1A3C1A; color: white;">
+        <div id="card-emoji-back" class="text-6xl mb-3"></div>
+        <div id="card-trans" class="text-2xl mb-2"></div>
+        <div id="card-word-back" class="text-3xl font-bold" style="font-family: 'Noto Naskh Arabic', serif;"></div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="flex justify-center gap-4 mt-4 pb-4"><button onclick="prevWord()" class="px-6 py-3 rounded-full text-xl text-white shadow-md category-btn" style="background: #3A6B3A;"><i data-lucide="arrow-right" style="width:24px;height:24px;display:inline;"></i> السَّابِقُ</button> <button onclick="markLearned()" id="learn-btn" class="px-6 py-3 rounded-full text-xl text-white shadow-md category-btn" style="background: #FFD700; color: #1A3C1A;">⭐ تَعَلَّمْتُ!</button> <button onclick="nextWord()" class="px-6 py-3 rounded-full text-xl text-white shadow-md category-btn" style="background: #3A6B3A;">التَّالِي <i data-lucide="arrow-left" style="width:24px;height:24px;display:inline;"></i></button>
+    </div>
+    <div id="stars-container" class="fixed inset-0 pointer-events-none z-50"></div>
+   </div><!-- QUIZ SCREEN -->
+   <div id="quiz-screen" class="h-full w-full flex flex-col items-center justify-center p-6" style="display:none;">
+    <h2 class="text-3xl font-bold mb-6" style="color: #1A3C1A; font-family: 'Noto Naskh Arabic', serif;">🎯 اِخْتَبِرْ نَفْسَكَ!</h2>
+    <div id="quiz-emoji" class="text-9xl mb-6 bounce-in"></div>
+    <p class="text-xl mb-6" style="color: #2D5A2D;">مَا هٰذَا؟</p>
+    <div id="quiz-options" class="grid grid-cols-2 gap-4 w-full max-w-md"></div>
+    <div id="quiz-feedback" class="text-2xl font-bold mt-6" style="min-height: 2rem;"></div><button id="quiz-next" onclick="nextQuiz()" class="mt-4 px-8 py-3 rounded-full text-xl text-white shadow-md category-btn" style="background: #2D5A2D; display:none;">التَّالِي ←</button> <button onclick="goCategories()" class="mt-4 px-6 py-2 rounded-full text-lg" style="background: rgba(26,60,26,0.15); color: #1A3C1A;">العَوْدَةُ</button>
+   </div>
+  </div>
+  <script>
+    const vocabData = {
+      animals: { name: "الحَيَوَانَاتُ", emoji: "🐱", words: [
+        { ar: "قِطَّةٌ", en: "Cat", em: "🐱" }, { ar: "كَلْبٌ", en: "Dog", em: "🐶" },
+        { ar: "أَسَدٌ", en: "Lion", em: "🦁" }, { ar: "فِيلٌ", en: "Elephant", em: "🐘" },
+        { ar: "طَائِرٌ", en: "Bird", em: "🐦" }, { ar: "سَمَكَةٌ", en: "Fish", em: "🐟" }
+      ]},
+      fruits: { name: "الفَوَاكِهُ", emoji: "🍎", words: [
+        { ar: "تُفَّاحَةٌ", en: "Apple", em: "🍎" }, { ar: "مَوْزَةٌ", en: "Banana", em: "🍌" },
+        { ar: "بُرْتُقَالَةٌ", en: "Orange", em: "🍊" }, { ar: "عِنَبٌ", en: "Grapes", em: "🍇" },
+        { ar: "فَرَاوِلَةٌ", en: "Strawberry", em: "🍓" }, { ar: "بِطِّيخٌ", en: "Watermelon", em: "🍉" }
+      ]},
+      colors: { name: "الأَلْوَانُ", emoji: "🎨", words: [
+        { ar: "أَحْمَرُ", en: "Red", em: "🔴" }, { ar: "أَزْرَقُ", en: "Blue", em: "🔵" },
+        { ar: "أَخْضَرُ", en: "Green", em: "🟢" }, { ar: "أَصْفَرُ", en: "Yellow", em: "🟡" },
+        { ar: "أَبْيَضُ", en: "White", em: "⚪" }, { ar: "أَسْوَدُ", en: "Black", em: "⚫" }
+      ]},
+      body: { name: "جِسْمُ الإِنْسَانِ", emoji: "🧒", words: [
+        { ar: "رَأْسٌ", en: "Head", em: "🗣️" }, { ar: "يَدٌ", en: "Hand", em: "✋" },
+        { ar: "عَيْنٌ", en: "Eye", em: "👁️" }, { ar: "أَنْفٌ", en: "Nose", em: "👃" },
+        { ar: "فَمٌ", en: "Mouth", em: "👄" }, { ar: "أُذُنٌ", en: "Ear", em: "👂" }
+      ]},
+      numbers: { name: "الأَرْقَامُ", emoji: "🔢", words: [
+        { ar: "وَاحِدٌ", en: "One", em: "1️⃣" }, { ar: "اِثْنَانِ", en: "Two", em: "2️⃣" },
+        { ar: "ثَلَاثَةٌ", en: "Three", em: "3️⃣" }, { ar: "أَرْبَعَةٌ", en: "Four", em: "4️⃣" },
+        { ar: "خَمْسَةٌ", en: "Five", em: "5️⃣" }, { ar: "سِتَّةٌ", en: "Six", em: "6️⃣" }
+      ]},
+      home: { name: "البَيْتُ", emoji: "🏠", words: [
+        { ar: "بَابٌ", en: "Door", em: "🚪" }, { ar: "كُرْسِيٌّ", en: "Chair", em: "🪑" },
+        { ar: "كِتَابٌ", en: "Book", em: "📖" }, { ar: "قَلَمٌ", en: "Pen", em: "🖊️" },
+        { ar: "طَاوِلَةٌ", en: "Table", em: "🪑" }, { ar: "سَرِيرٌ", en: "Bed", em: "🛏️" }
+      ]}
+    };
+
+    let currentCat = null, currentIdx = 0, score = 0, learned = new Set(), quizWords = [], quizIdx = 0;
+
+    const defaultConfig = {
+      main_title: "كَلِمَاتِي الأُولَى",
+      subtitle: "تَعَلُّمُ المُفْرَدَاتِ العَرَبِيَّةِ لِلأَطْفَالِ",
+      academy_name: "Episteme Learning Academy",
+      background_color: "#D0E8D0",
+      surface_color: "#FFFFFF",
+      text_color: "#1A3C1A",
+      primary_action_color: "#2D5A2D",
+      accent_color: "#FFD700",
+      font_family: "Noto Naskh Arabic",
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+      const el = (id) => document.getElementById(id);
+      el('title-el').textContent = c.main_title;
+      el('subtitle-el').textContent = c.subtitle;
+      el('academy-el').textContent = c.academy_name;
+
+      document.getElementById('app').style.background = `linear-gradient(135deg, ${c.background_color}, ${adjustColor(c.background_color, -15)})`;
+
+      document.querySelectorAll('[style*="color: #1A3C1A"], [style*="color:#1A3C1A"]').forEach(e => {
+        if (!e.closest('.card-back')) e.style.color = c.text_color;
+      });
+
+      const ff = `${c.font_family}, Amiri, serif`;
+      document.querySelectorAll('[style*="font-family"]').forEach(e => {
+        if (e.style.fontFamily.includes('Noto Naskh')) e.style.fontFamily = `${c.font_family}, serif`;
+      });
+      document.body.style.fontFamily = `Amiri, ${c.font_family}, serif`;
+
+      const bs = c.font_size;
+      el('title-el').style.fontSize = `${bs * 3.2}px`;
+      el('subtitle-el').style.fontSize = `${bs * 1.4}px`;
+    }
+
+    function adjustColor(hex, amount) {
+      let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      r = Math.max(0, Math.min(255, r + amount));
+      g = Math.max(0, Math.min(255, g + amount));
+      b = Math.max(0, Math.min(255, b + amount));
+      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => applyConfig(config),
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }},
+          { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }},
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }},
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }},
+          { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }}
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }},
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }}
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ["main_title", config.main_title || defaultConfig.main_title],
+        ["subtitle", config.subtitle || defaultConfig.subtitle],
+        ["academy_name", config.academy_name || defaultConfig.academy_name]
+      ])
+    });
+
+    function showScreen(id) {
+      ['home-screen','category-screen','learn-screen','quiz-screen'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? 'flex' : 'none';
+      });
+    }
+
+    function startLearning() { showScreen('category-screen'); renderCategories(); }
+    function goHome() { showScreen('home-screen'); }
+    function goCategories() { showScreen('category-screen'); renderCategories(); }
+
+    function renderCategories() {
+      const container = document.getElementById('categories');
+      container.innerHTML = '';
+      const keys = Object.keys(vocabData);
+      keys.forEach((key, i) => {
+        const cat = vocabData[key];
+        const learnedCount = cat.words.filter(w => learned.has(w.ar)).length;
+        const div = document.createElement('div');
+        div.className = 'category-btn rounded-2xl p-5 flex flex-col items-center justify-center shadow-lg cursor-pointer';
+        div.style.background = 'white';
+        div.style.animationDelay = `${i * 0.08}s`;
+        div.innerHTML = `
+          <div class="text-5xl mb-2">${cat.emoji}</div>
+          <div class="text-xl font-bold" style="color: #1A3C1A; font-family: 'Noto Naskh Arabic', serif;">${cat.name}</div>
+          <div class="text-sm mt-1" style="color: #3A6B3A;">${learnedCount}/${cat.words.length} ⭐</div>
+          ${learnedCount === cat.words.length ? '<div class="mt-1">✅</div>' : ''}
+        `;
+        div.onclick = () => openCategory(key);
+        container.appendChild(div);
+      });
+
+      // Quiz button
+      const quizDiv = document.createElement('div');
+      quizDiv.className = 'category-btn rounded-2xl p-5 flex flex-col items-center justify-center shadow-lg cursor-pointer';
+      quizDiv.style.background = '#FFD700';
+      quizDiv.innerHTML = `<div class="text-5xl mb-2">🎯</div><div class="text-xl font-bold" style="color: #1A3C1A;">اِخْتِبَارٌ</div>`;
+      quizDiv.onclick = startQuiz;
+      container.appendChild(quizDiv);
+
+      document.getElementById('total-score').textContent = `⭐ ${score}`;
+    }
+
+    function openCategory(key) {
+      currentCat = key; currentIdx = 0;
+      showScreen('learn-screen');
+      document.getElementById('cat-title').textContent = vocabData[key].name;
+      showWord();
+    }
+
+    function showWord() {
+      const words = vocabData[currentCat].words;
+      const w = words[currentIdx];
+      document.getElementById('card-inner').classList.remove('flipped');
+      document.getElementById('card-emoji').textContent = w.em;
+      document.getElementById('card-word').textContent = w.ar;
+      document.getElementById('card-emoji-back').textContent = w.em;
+      document.getElementById('card-trans').textContent = w.en;
+      document.getElementById('card-word-back').textContent = w.ar;
+      document.getElementById('word-count').textContent = `${currentIdx + 1}/${words.length}`;
+      document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / words.length) * 100}%`;
+      document.getElementById('learn-btn').textContent = learned.has(w.ar) ? '✅ تَعَلَّمْتُ!' : '⭐ تَعَلَّمْتُ!';
+    }
+
+    function flipCard() { document.getElementById('card-inner').classList.toggle('flipped'); }
+
+    function nextWord() {
+      const words = vocabData[currentCat].words;
+      currentIdx = (currentIdx + 1) % words.length;
+      showWord();
+    }
+
+    function prevWord() {
+      const words = vocabData[currentCat].words;
+      currentIdx = (currentIdx - 1 + words.length) % words.length;
+      showWord();
+    }
+
+    function markLearned() {
+      const w = vocabData[currentCat].words[currentIdx];
+      if (!learned.has(w.ar)) {
+        learned.add(w.ar);
+        score += 10;
+        showStars();
+        document.getElementById('learn-btn').textContent = '✅ تَعَلَّمْتُ!';
+      }
+    }
+
+    function showStars() {
+      const container = document.getElementById('stars-container');
+      for (let i = 0; i < 8; i++) {
+        const star = document.createElement('div');
+        star.textContent = '⭐';
+        star.className = 'star-burst absolute text-3xl';
+        star.style.left = `${30 + Math.random() * 40}%`;
+        star.style.top = `${30 + Math.random() * 40}%`;
+        star.style.animationDelay = `${i * 0.1}s`;
+        container.appendChild(star);
+        setTimeout(() => star.remove(), 800);
+      }
+    }
+
+    function startQuiz() {
+      if (learned.size < 4) {
+        const msg = document.createElement('div');
+        msg.className = 'fixed inset-0 flex items-center justify-center z-50';
+        msg.innerHTML = `<div class="bg-white rounded-2xl p-8 shadow-2xl text-center max-w-sm mx-4">
+          <div class="text-5xl mb-4">📚</div>
+          <p class="text-xl font-bold mb-4" style="color: #1A3C1A;">تَعَلَّمْ 4 كَلِمَاتٍ عَلَى الأَقَلِّ أَوَّلًا!</p>
+          <button onclick="this.closest('.fixed').remove()" class="px-6 py-2 rounded-full text-white" style="background: #2D5A2D;">حَسَنًا</button>
+        </div>`;
+        document.body.appendChild(msg);
+        return;
+      }
+      const allWords = Object.values(vocabData).flatMap(c => c.words).filter(w => learned.has(w.ar));
+      quizWords = allWords.sort(() => Math.random() - 0.5).slice(0, Math.min(5, allWords.length));
+      quizIdx = 0;
+      showScreen('quiz-screen');
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      if (quizIdx >= quizWords.length) {
+        document.getElementById('quiz-emoji').textContent = '🏆';
+        document.getElementById('quiz-options').innerHTML = '';
+        document.getElementById('quiz-feedback').textContent = `أَحْسَنْتَ! النَّتِيجَةُ: ${score} ⭐`;
+        document.getElementById('quiz-next').style.display = 'none';
+        return;
+      }
+      const w = quizWords[quizIdx];
+      document.getElementById('quiz-emoji').textContent = w.em;
+      document.getElementById('quiz-feedback').textContent = '';
+      document.getElementById('quiz-next').style.display = 'none';
+
+      const allWords = Object.values(vocabData).flatMap(c => c.words);
+      let options = [w];
+      while (options.length < 4) {
+        const r = allWords[Math.floor(Math.random() * allWords.length)];
+        if (!options.find(o => o.ar === r.ar)) options.push(r);
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('quiz-options');
+      container.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'p-4 rounded-xl text-xl font-bold shadow-md category-btn';
+        btn.style.background = 'white';
+        btn.style.color = '#1A3C1A';
+        btn.style.fontFamily = "'Noto Naskh Arabic', serif";
+        btn.textContent = opt.ar;
+        btn.onclick = () => checkAnswer(opt, w, container);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, correct, container) {
+      const btns = container.querySelectorAll('button');
+      btns.forEach(b => {
+        b.disabled = true;
+        if (b.textContent === correct.ar) b.style.background = '#4CAF50';
+        else if (b.textContent === selected.ar && selected.ar !== correct.ar) b.style.background = '#EF4444';
+      });
+      if (selected.ar === correct.ar) {
+        score += 5;
+        document.getElementById('quiz-feedback').textContent = '🎉 أَحْسَنْتَ!';
+        showStarsQuiz();
+      } else {
+        document.getElementById('quiz-feedback').textContent = `❌ الإِجَابَةُ: ${correct.ar}`;
+      }
+      document.getElementById('quiz-next').style.display = 'inline-block';
+    }
+
+    function showStarsQuiz() {
+      for (let i = 0; i < 5; i++) {
+        const star = document.createElement('div');
+        star.textContent = '🌟';
+        star.className = 'star-burst fixed text-3xl z-50';
+        star.style.left = `${20 + Math.random() * 60}%`;
+        star.style.top = `${20 + Math.random() * 60}%`;
+        star.style.animationDelay = `${i * 0.1}s`;
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 800);
+      }
+    }
+
+    function nextQuiz() { quizIdx++; showQuizQuestion(); }
+
+    lucide.createIcons();
+  </script>
+ </body>
+</html>
