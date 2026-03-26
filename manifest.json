@@ -24,9 +24,9 @@
       "purpose": "any maskable"
     },
     {
-      "src": "icon-128.jpg",
+      "src": "icon-128.png",
       "sizes": "128x128",
-      "type": "image/jpg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
@@ -36,9 +36,9 @@
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.jpg",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
