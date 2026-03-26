@@ -1,15 +1,45 @@
 {
-  "name": "Kalimati Al-Ula",
-  "short_name": "Kalimati",
-  "start_url": ".",
+  "name": "كَلِمَاتِي الأُولَى - Arabic Learning",
+  "short_name": "كلماتي",
+  "description": "Interactive Arabic vocabulary learning app for children.",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#D0E8D0",
   "theme_color": "#2D5A2D",
+  "lang": "ar",
+  "dir": "rtl",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-128.jpg",
+      "sizes": "128x128",
+      "type": "image/jpg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.jpg",
+      "sizes": "512x512",
+      "type": "image/jpg",
+      "purpose": "any maskable"
     }
   ]
 }
