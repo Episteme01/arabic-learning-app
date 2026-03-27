@@ -12,6 +12,17 @@
     "window-controls-overlay",
     "browser"
   ],
+"share_target": {
+  "action": "/arabic-learning-app/index.html",
+  "method": "GET",
+  "enctype": "application/x-www-form-urlencoded",
+  "params": {
+    "title": "title",
+    "text": "text",
+    "url": "url"
+  }
+}
+  
   "orientation": "portrait",
   "background_color": "#D0E8D0",
   "theme_color": "#2D5A2D",
